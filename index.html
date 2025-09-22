@@ -39,9 +39,9 @@
       import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
       // Supabase setup
-      const SUPABASE_URL = "https://flcrrpggontcixtvjchx.supabase.co";
-      const SUPABASE_ANON_KEY =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsY3JycGdnb250Y2l4dHZqY2h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMTkwMDUsImV4cCI6MjA3MTg5NTAwNX0.yee0ZMsSmKCLaKHmEM_7azr-oH0kETyzHmuZOUYXOFo";
+      const SUPABASE_URL = process.env.SUPABASE_URL;
+      const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+
       const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       const loader = document.getElementById("loader");
