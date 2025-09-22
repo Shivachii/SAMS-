@@ -1,0 +1,10 @@
+id,student_id,staff_id,title,description,category,status,priority,created_at,updated_at
+5,520c1dfa-9cd4-41c2-ba6d-91a1c236ea2b,5d78f278-1f48-44b2-bf91-7d487a9cd061,Requesting new school id,I misplaced my ID I'd like a new one,Academics,resolved,normal,2025-08-28 10:36:57.118+00,2025-09-01 07:12:47.446849+00
+6,520c1dfa-9cd4-41c2-ba6d-91a1c236ea2b,fe17226b-95ea-429d-8746-58bd0d6852d4,Transfer room in hostel,Requesting new room to transfer to in the hostels,Accommodation,pending,normal,2025-08-30 20:10:02.808+00,2025-09-01 07:24:04.95804+00
+7,690e7d9a-2e4f-42b5-a2ba-acb921b3907f,e9b2b76d-4667-4eeb-b457-71251cb1efee,Missing Marks,"Hello, I did not receive my end of semester exam marks",Academic,pending,normal,2025-09-01 07:07:56.718117+00,2025-09-01 07:23:57.268416+00
+8,7290a64a-b5d2-4df3-bd4e-108dc1142952,b0184ccd-9774-44ba-a3d1-9a0a6fedaed4,Request to switch classes,I am requesting to transfer to the 8am class,Academic,pending,normal,2025-09-01 07:09:43.613524+00,2025-09-01 07:23:50.105365+00
+9,8f4addb3-91c0-41ae-a972-e1ec168a62c1,5d78f278-1f48-44b2-bf91-7d487a9cd061,Unfair marking,I feel that my end of CAT marks are incorrect,Academic,closed,normal,2025-09-01 07:10:52.017677+00,2025-09-01 07:25:16.30709+00
+10,9b7a5565-745f-44d2-a22e-ac92e14af2b8,e9b2b76d-4667-4eeb-b457-71251cb1efee,Double fee charge,I was charged twice for the semester fees,Finance,pending,normal,2025-09-01 07:11:49.076782+00,2025-09-01 07:23:20.393771+00
+11,7290a64a-b5d2-4df3-bd4e-108dc1142952,fe17226b-95ea-429d-8746-58bd0d6852d4,New library card,Requesting new library card,Library,pending,normal,2025-09-01 07:15:01.608134+00,2025-09-01 07:23:12.368544+00
+12,8f4addb3-91c0-41ae-a972-e1ec168a62c1,b0184ccd-9774-44ba-a3d1-9a0a6fedaed4,"New food menu ",Requesting updated food menu for the mess hall,Catering,open,normal,2025-09-01 07:16:00.437349+00,2025-09-01 07:28:47.306943+00
+13,520c1dfa-9cd4-41c2-ba6d-91a1c236ea2b,5d78f278-1f48-44b2-bf91-7d487a9cd061,This is a test issue,this is the issue's description,Finance,closed,normal,2025-09-01 08:58:57.605+00,2025-09-01 09:01:53.156125+00

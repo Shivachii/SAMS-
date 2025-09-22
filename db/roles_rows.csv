@@ -1,0 +1,4 @@
+id,name,description
+1,student,A student user who can submit issues and view their history.
+2,staff,"A staff user who can work on assigned issues, submit feedback, and update status."
+3,admin,"An admin user who can assign issues, manage users, and generate reports."
