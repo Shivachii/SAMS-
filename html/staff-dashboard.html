@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff Dashboard - SAMS</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="icon" href="/assets/images/CUEA-LOGO.png" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="/assets/images/CUEA-LOGO.png" alt="CUEA Logo" /> SAMS
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" href="/html/staff-dashboard.html"
+                >Dashboard</a
+              >
+            </li>
+          </ul>
+          <div class="dropdown">
+            <a
+              href="#"
+              class="nav-link dropdown-toggle text-white"
+              data-bs-toggle="dropdown"
+            >
+              <i class="bi bi-person-circle me-1"></i>
+              <span class="user-name"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><button class="dropdown-item logout-btn">Logout</button></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4" id="main-content" style="display: none">
+      <!-- Welcome -->
+      <div class="mb-4">
+        <h2 class="mb-1">Welcome back, <span class="user-name"></span>!</h2>
+        <p class="text-muted">
+          Here’s an overview of your assigned issues. Today is
+          <span id="current-date"></span>.
+        </p>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+              <h5>All Assigned Issues</h5>
+              <h2 id="assigned-issues" class="text-success">0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+              <h5>Open Issues</h5>
+              <h2 id="open-assigned" class="text-danger">0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+              <h5>Closed Issues</h5>
+              <h2 id="closed-assigned" class="text-primary">0</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assigned Issues Table -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h4>Manage Your Assigned Issues</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Student</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="staff-issues-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Issue Modal -->
+      <div class="modal fade" id="staffIssueModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title">Issue Details</h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Title:</strong> <span id="modal-title"></span></p>
+              <p><strong>Description:</strong></p>
+              <p id="modal-description"></p>
+              <p>
+                <strong>Status:</strong>
+                <select
+                  id="modal-status"
+                  class="form-select w-auto d-inline-block"
+                >
+                  <option value="open">Open</option>
+                  <option value="pending">Pending</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="closed">Closed</option>
+                </select>
+                <button
+                  id="update-status-btn"
+                  class="btn btn-sm btn-warning ms-2"
+                >
+                  Update
+                </button>
+              </p>
+              <p>
+                <strong>Date Submitted:</strong>
+                <span id="modal-date"></span>
+              </p>
+              <hr />
+              <div>
+                <label>Add Feedback:</label>
+                <textarea
+                  id="feedback-text"
+                  class="form-control mb-2"
+                  rows="3"
+                ></textarea>
+                <button id="add-feedback-btn" class="btn btn-sm btn-primary">
+                  Submit Feedback
+                </button>
+              </div>
+              <div>
+                <h6 class="mt-3">Feedback History:</h6>
+                <ul id="feedback-list" class="list-group"></ul>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+      const SUPABASE_URL = "https://flcrrpggontcixtvjchx.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsY3JycGdnb250Y2l4dHZqY2h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMTkwMDUsImV4cCI6MjA3MTg5NTAwNX0.yee0ZMsSmKCLaKHmEM_7azr-oH0kETyzHmuZOUYXOFo";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      const mainContent = document.getElementById("main-content");
+      const userNameEl = document.querySelectorAll(".user-name");
+      const staffIssuesTbody = document.getElementById("staff-issues-tbody");
+      let allIssues = [],
+        currentUser = null;
+      const issueModal = new bootstrap.Modal(
+        document.getElementById("staffIssueModal")
+      );
+
+      async function protectRoute() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) return (window.location.href = "/html/login.html");
+
+        const { data: userData, error } = await supabase
+          .from("users")
+          .select("*, roles(name)")
+          .eq("id", session.user.id)
+          .single();
+
+        if (error || userData.roles.name !== "staff")
+          return (window.location.href = "/html/login.html");
+
+        currentUser = userData;
+        userNameEl.forEach((el) => (el.textContent = userData.full_name));
+        mainContent.style.display = "block";
+        document.getElementById("current-date").textContent =
+          new Date().toLocaleDateString(undefined, {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+      }
+
+      async function loadIssues() {
+        const { data: issues, error } = await supabase
+          .from("issues")
+          .select("*, students:student_id(full_name)")
+          .eq("staff_id", currentUser.id)
+          .order("created_at", { ascending: false });
+        if (error) return console.error(error);
+        allIssues = issues;
+        renderIssuesTable(issues);
+        updateSummaryCards();
+      }
+
+      function renderIssuesTable(issues) {
+        staffIssuesTbody.innerHTML = issues
+          .map(
+            (i) => `
+              <tr>
+                <td>${i.title}</td>
+                <td>${i.students.full_name}</td>
+                <td>${i.status}</td>
+                <td>${new Date(i.created_at).toLocaleString()}</td>
+                <td>
+                  <button class="btn btn-sm btn-success view-edit-btn" data-id="${
+                    i.id
+                  }">
+                    Manage
+                  </button>
+                </td>
+              </tr>`
+          )
+          .join("");
+        document
+          .querySelectorAll(".view-edit-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () => openIssueModal(btn.dataset.id))
+          );
+      }
+
+      async function openIssueModal(id) {
+        const issue = allIssues.find((i) => i.id == id);
+        if (!issue) return;
+        document.getElementById("modal-title").textContent = issue.title;
+        document.getElementById("modal-description").textContent =
+          issue.description;
+        document.getElementById("modal-status").value = issue.status;
+        document.getElementById("modal-date").textContent = new Date(
+          issue.created_at
+        ).toLocaleString();
+        document.getElementById("update-status-btn").dataset.issueId = issue.id;
+        document.getElementById("add-feedback-btn").dataset.issueId = issue.id;
+        loadFeedback(issue.id);
+        issueModal.show();
+      }
+
+      async function loadFeedback(issueId) {
+        const { data, error } = await supabase
+          .from("feedback")
+          .select("*, users(full_name)")
+          .eq("issue_id", issueId)
+          .order("created_at", { ascending: true });
+        if (error) return console.error(error);
+        document.getElementById("feedback-list").innerHTML = data
+          .map(
+            (f) =>
+              `<li class="list-group-item"><strong>${f.users.full_name}:</strong> ${f.comment}</li>`
+          )
+          .join("");
+      }
+
+      document
+        .getElementById("add-feedback-btn")
+        .addEventListener("click", async () => {
+          const issueId =
+            document.getElementById("add-feedback-btn").dataset.issueId;
+          const comment = document.getElementById("feedback-text").value.trim();
+          if (!comment) return alert("Comment cannot be empty");
+          const { error } = await supabase
+            .from("feedback")
+            .insert([{ issue_id: issueId, staff_id: currentUser.id, comment }]);
+          if (error) return console.error(error);
+          document.getElementById("feedback-text").value = "";
+          loadFeedback(issueId);
+        });
+
+      document
+        .getElementById("update-status-btn")
+        .addEventListener("click", async () => {
+          const issueId =
+            document.getElementById("update-status-btn").dataset.issueId;
+          const newStatus = document.getElementById("modal-status").value;
+          const { error } = await supabase
+            .from("issues")
+            .update({ status: newStatus })
+            .eq("id", issueId);
+          if (error) return console.error(error);
+          alert("Status updated successfully!");
+          issueModal.hide();
+          loadIssues();
+        });
+
+      function updateSummaryCards() {
+        document.getElementById("assigned-issues").textContent =
+          allIssues.length;
+        document.getElementById("open-assigned").textContent = allIssues.filter(
+          (i) => i.status === "open"
+        ).length;
+        document.getElementById("closed-assigned").textContent =
+          allIssues.filter((i) => i.status === "closed").length;
+      }
+
+      document
+        .querySelector(".logout-btn")
+        .addEventListener("click", async () => {
+          await supabase.auth.signOut();
+          window.location.href = "/html/login.html";
+        });
+
+      await protectRoute();
+      await loadIssues();
+    </script>
+  </body>
+</html>

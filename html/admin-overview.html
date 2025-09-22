@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - SAMS</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="icon" href="/assets/images/CUEA-LOGO.png" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="/assets/images/CUEA-LOGO.png" alt="CUEA Logo" /> SAMS
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" href="/html/admin-overview.html"
+                >Overview</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/html/admin-reports.html">Reports</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/html/admin-manage-issues.html"
+                >Manage Issues</a
+              >
+            </li>
+          </ul>
+          <div class="dropdown">
+            <a
+              href="#"
+              class="nav-link dropdown-toggle text-white"
+              data-bs-toggle="dropdown"
+            >
+              <i class="bi bi-person-circle me-1"></i>
+              <span class="user-name"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><button class="dropdown-item logout-btn">Logout</button></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container-fluid py-4" id="main-content" style="display: none">
+      <!-- Intro Section -->
+      <div class="mb-4">
+        <h2 class="mb-1">Welcome back, <span class="user-name"></span>!</h2>
+        <p class="text-muted">
+          Here’s an overview of system activity. Today is
+          <span id="current-date"></span>.
+        </p>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+              <h5>Total Issues</h5>
+              <h2 id="total-issues" class="text-primary">0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+              <h5>Closed Issues</h5>
+              <h2 id="closed-issues" class="text-danger">0</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+              <h5>Pending Issues</h5>
+              <h2 id="pending-issues" class="text-warning">0</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manage Issues Section -->
+      <div class="card mt-4">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h4>Manage Most Recent Issues</h4>
+          <!-- <form
+            action="../reports/generate-report.php"
+            method="post"
+            target="_blank"
+          >
+            <input type="hidden" name="report_data" id="report_data_input" />
+            <button
+              type="submit"
+              class="btn btn-sm btn-accent"
+              id="generate-report-btn"
+            >
+              <i class="bi bi-file-earmark-pdf"></i> Export PDF Report
+            </button>
+          </form> -->
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <select id="filter-status" class="form-select">
+                <option value="">All Status</option>
+                <option value="open">Open</option>
+                <option value="pending">Pending</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select id="filter-staff" class="form-select">
+                <option value="">All Staff</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Student</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Assigned Staff</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-issues-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Issue Modal -->
+      <div class="modal fade" id="issueDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title">Issue Details</h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p>
+                <strong>Title:</strong> <span id="modal-issue-title"></span>
+              </p>
+              <p>
+                <strong>Category:</strong>
+                <span id="modal-issue-category"></span>
+              </p>
+              <p><strong>Description:</strong></p>
+              <p id="modal-issue-description"></p>
+              <p>
+                <strong>Status:</strong>
+                <select
+                  id="modal-issue-status"
+                  class="form-select w-auto d-inline-block"
+                >
+                  <option value="open">Open</option>
+                  <option value="pending">Pending</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="closed">Closed</option>
+                </select>
+                <button
+                  id="update-status-btn"
+                  class="btn btn-sm btn-warning ms-2"
+                >
+                  Update
+                </button>
+              </p>
+              <p>
+                <strong>Priority:</strong>
+                <span id="modal-issue-priority"></span>
+              </p>
+              <p>
+                <strong>Date Submitted:</strong>
+                <span id="modal-issue-created"></span>
+              </p>
+              <hr />
+              <div>
+                <label>Assign Staff:</label>
+                <select id="assign-staff" class="form-select mb-2"></select>
+                <button
+                  id="assign-staff-btn"
+                  class="btn btn-sm btn-success mb-3"
+                >
+                  Assign
+                </button>
+              </div>
+              <div>
+                <label>Add Feedback:</label>
+                <textarea
+                  id="feedback-text"
+                  class="form-control mb-2"
+                  rows="3"
+                ></textarea>
+                <button id="add-feedback-btn" class="btn btn-sm btn-primary">
+                  Submit Feedback
+                </button>
+              </div>
+              <div>
+                <h6 class="mt-3">Feedback History:</h6>
+                <ul id="feedback-list" class="list-group"></ul>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+      const SUPABASE_URL = "https://flcrrpggontcixtvjchx.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsY3JycGdnb250Y2l4dHZqY2h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMTkwMDUsImV4cCI6MjA3MTg5NTAwNX0.yee0ZMsSmKCLaKHmEM_7azr-oH0kETyzHmuZOUYXOFo";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      const mainContent = document.getElementById("main-content");
+      const userNameEl = document.querySelectorAll(".user-name");
+      const adminIssuesTbody = document.getElementById("admin-issues-tbody");
+      let allStaff = [],
+        allIssues = [],
+        currentUser = null;
+      const issueModal = new bootstrap.Modal(
+        document.getElementById("issueDetailsModal")
+      );
+
+      async function protectRoute() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) return (window.location.href = "/html/login.html");
+        const { data: userData, error } = await supabase
+          .from("users")
+          .select("*, roles(name)")
+          .eq("id", session.user.id)
+          .single();
+        if (error || userData.roles.name !== "admin")
+          return (window.location.href = "/html/login.html");
+        currentUser = userData;
+        userNameEl.forEach((el) => (el.textContent = userData.full_name));
+        mainContent.style.display = "block";
+        document.getElementById("current-date").textContent =
+          new Date().toLocaleDateString(undefined, {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+      }
+
+      async function loadStaff() {
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("role_id", 2);
+        if (error) return console.error(error);
+        allStaff = data;
+        document.getElementById("assign-staff").innerHTML = data
+          .map((s) => `<option value="${s.id}">${s.full_name}</option>`)
+          .join("");
+        document.getElementById("filter-staff").innerHTML =
+          `<option value="">All Staff</option>` +
+          data
+            .map((s) => `<option value="${s.id}">${s.full_name}</option>`)
+            .join("");
+      }
+
+      async function loadIssues() {
+        const { data: issues, error } = await supabase
+          .from("issues")
+          .select(
+            "*, students:student_id(full_name), staff:staff_id(full_name)"
+          )
+          .order("created_at", { ascending: false })
+          .limit(10);
+        if (error) return console.error(error);
+        allIssues = issues;
+        renderIssuesTable(issues);
+        updateSummaryCards();
+      }
+
+      function renderIssuesTable(issues) {
+        const statusFilter = document.getElementById("filter-status").value;
+        const staffFilter = document.getElementById("filter-staff").value;
+        const filtered = issues.filter(
+          (i) =>
+            (!statusFilter || i.status === statusFilter) &&
+            (!staffFilter || i.staff_id == staffFilter)
+        );
+        adminIssuesTbody.innerHTML = filtered
+          .map(
+            (i) => `
+              <tr>
+                <td>${i.title}</td>
+                <td>${i.students.full_name}</td>
+                <td>${i.status}</td>
+                <td>${new Date(i.created_at).toLocaleString()}</td>
+                <td>${i.staff ? i.staff.full_name : "-"}</td>
+                <td><button class="btn btn-sm btn-primary view-edit-btn" data-id="${
+                  i.id
+                }">View/Edit</button></td>
+              </tr>`
+          )
+          .join("");
+        document
+          .querySelectorAll(".view-edit-btn")
+          .forEach((btn) =>
+            btn.addEventListener("click", () => openIssueModal(btn.dataset.id))
+          );
+      }
+
+      async function openIssueModal(id) {
+        const issue = allIssues.find((i) => i.id == id);
+        if (!issue) return;
+        document.getElementById("modal-issue-title").textContent = issue.title;
+        document.getElementById("modal-issue-category").textContent =
+          issue.category;
+        document.getElementById("modal-issue-description").textContent =
+          issue.description;
+        document.getElementById("modal-issue-status").value = issue.status;
+        document.getElementById("modal-issue-priority").textContent =
+          issue.priority;
+        document.getElementById("modal-issue-created").textContent = new Date(
+          issue.created_at
+        ).toLocaleString();
+        document.getElementById("assign-staff-btn").dataset.issueId = issue.id;
+        document.getElementById("update-status-btn").dataset.issueId = issue.id;
+        document.getElementById("add-feedback-btn").dataset.issueId = issue.id;
+        loadFeedback(issue.id);
+        issueModal.show();
+      }
+
+      async function loadFeedback(issueId) {
+        const { data, error } = await supabase
+          .from("feedback")
+          .select("*, users(full_name)")
+          .eq("issue_id", issueId)
+          .order("created_at", { ascending: true });
+        if (error) return console.error(error);
+        document.getElementById("feedback-list").innerHTML = data
+          .map(
+            (f) =>
+              `<li class="list-group-item"><strong>${f.users.full_name}:</strong> ${f.comment}</li>`
+          )
+          .join("");
+      }
+
+      document
+        .getElementById("add-feedback-btn")
+        .addEventListener("click", async () => {
+          const issueId =
+            document.getElementById("add-feedback-btn").dataset.issueId;
+          const comment = document.getElementById("feedback-text").value.trim();
+          if (!comment) return alert("Comment cannot be empty");
+          const { error } = await supabase
+            .from("feedback")
+            .insert([{ issue_id: issueId, staff_id: currentUser.id, comment }]);
+          if (error) return console.error(error);
+          document.getElementById("feedback-text").value = "";
+          loadFeedback(issueId);
+        });
+
+      document
+        .getElementById("assign-staff-btn")
+        .addEventListener("click", async () => {
+          const issueId =
+            document.getElementById("assign-staff-btn").dataset.issueId;
+          const staffId = document.getElementById("assign-staff").value;
+          const { error } = await supabase
+            .from("issues")
+            .update({ staff_id: staffId, status: "pending" })
+            .eq("id", issueId);
+          if (error) return console.error(error);
+          alert("Staff assigned successfully!");
+          issueModal.hide();
+          loadIssues();
+        });
+
+      document
+        .getElementById("update-status-btn")
+        .addEventListener("click", async () => {
+          const issueId =
+            document.getElementById("update-status-btn").dataset.issueId;
+          const newStatus = document.getElementById("modal-issue-status").value;
+          const { error } = await supabase
+            .from("issues")
+            .update({ status: newStatus })
+            .eq("id", issueId);
+          if (error) return console.error(error);
+          alert("Status updated successfully!");
+          issueModal.hide();
+          loadIssues();
+        });
+
+      document
+        .getElementById("filter-status")
+        .addEventListener("change", () => renderIssuesTable(allIssues));
+      document
+        .getElementById("filter-staff")
+        .addEventListener("change", () => renderIssuesTable(allIssues));
+
+      function updateSummaryCards() {
+        document.getElementById("total-issues").textContent = allIssues.length;
+        document.getElementById("closed-issues").textContent = allIssues.filter(
+          (i) => i.status === "closed"
+        ).length;
+        document.getElementById("pending-issues").textContent =
+          allIssues.filter((i) => i.status === "pending").length;
+      }
+
+      // document
+      //   .getElementById("generate-report-btn")
+      //   .addEventListener("click", () => {
+      //     document.getElementById("report_data_input").value =
+      //       JSON.stringify(allIssues);
+      //   });
+
+      document
+        .querySelector(".logout-btn")
+        .addEventListener("click", async () => {
+          await supabase.auth.signOut();
+          window.location.href = "/html/login.html";
+        });
+
+      await protectRoute();
+      await loadStaff();
+      await loadIssues();
+    </script>
+  </body>
+</html>

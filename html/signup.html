@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - SAMS CUEA</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link
+      rel="icon"
+      href="https://www.cuea.edu/wp-content/uploads/2022/11/CUEA-FAVICON.png"
+    />
+  </head>
+  <body class="bg-light">
+    <div
+      class="container d-flex justify-content-center align-items-center vh-100"
+    >
+      <div class="card auth-card shadow-lg">
+        <div class="card-body">
+          <div class="text-center mb-4">
+            <img
+              src="/assets/images/CUEA-LOGO.png"
+              alt="CUEA Logo"
+              style="max-height: 80px"
+            />
+            <h3 class="mt-3 text-primary">Create User Account</h3>
+          </div>
+          <form id="signup-form">
+            <div class="mb-3">
+              <label for="fullName" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="fullName" required />
+            </div>
+            <div class="mb-3">
+              <label for="regNo" class="form-label">Registration Number</label>
+              <input type="text" class="form-control" id="regNo" />
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" required />
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                required
+                minlength="6"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="role" class="form-label">User Role</label>
+              <select class="form-select" id="role" required>
+                <option value="">-- Select Role --</option>
+                <option value="student">Student</option>
+                <option value="staff">Staff</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+            <div class="text-center mt-3">
+              <p class="mt-2 mb-0 small">
+                Already have an account? <a href="/html/login.html">Login</a>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="position-fixed top-0 end-0 p-3"></div>
+
+    <!-- Supabase SDK -->
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+      // Initialize Supabase
+      const SUPABASE_URL = "https://flcrrpggontcixtvjchx.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsY3JycGdnb250Y2l4dHZqY2h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMTkwMDUsImV4cCI6MjA3MTg5NTAwNX0.yee0ZMsSmKCLaKHmEM_7azr-oH0kETyzHmuZOUYXOFo";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      const signupForm = document.getElementById("signup-form");
+
+      //  Toast Helper
+      function showToast(message, type = "success") {
+        const toastId = `toast-${Date.now()}`;
+        const bgClass = type === "success" ? "bg-success" : "bg-danger";
+        const toast = document.createElement("div");
+        toast.className = `toast align-items-center text-white ${bgClass} border-0`;
+        toast.id = toastId;
+        toast.role = "alert";
+        toast.ariaLive = "assertive";
+        toast.ariaAtomic = "true";
+        toast.innerHTML = `
+          <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>
+        `;
+        document.getElementById("toast-container").appendChild(toast);
+
+        const bsToast = new bootstrap.Toast(toast, { delay: 4000 });
+        bsToast.show();
+      }
+
+      signupForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const fullName = document.getElementById("fullName").value;
+        const regNo = document.getElementById("regNo").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
+
+        if (!role) {
+          showToast("Please select a valid user role.", "error");
+          return;
+        }
+
+        let redirectUrl = "";
+        switch (role) {
+          case "student":
+            redirectUrl = "/html/student-dashboard.html";
+            break;
+          case "staff":
+            redirectUrl = "/html/staff-dashboard.html";
+            break;
+          case "admin":
+            redirectUrl = "/html/admin-overview.html";
+            break;
+        }
+
+        try {
+          // Sign up user with Supabase Auth
+          const { data: authData, error: signUpError } =
+            await supabase.auth.signUp({ email, password });
+          if (signUpError) throw signUpError;
+
+          const userId = authData.user.id;
+
+          // Get role_id from roles table
+          const { data: roles, error: roleError } = await supabase
+            .from("roles")
+            .select("id,name")
+            .eq("name", role);
+
+          if (roleError) throw roleError;
+          if (!roles || roles.length === 0)
+            throw new Error(`Role "${role}" not found`);
+
+          const roleId = roles[0].id;
+
+          // Insert user profile into 'users' table
+          const { error: dbError } = await supabase.from("users").insert([
+            {
+              id: userId,
+              full_name: fullName,
+              reg_no: regNo,
+              role_id: roleId,
+            },
+          ]);
+          if (dbError) throw dbError;
+
+          showToast("Account created successfully! Redirecting...");
+          setTimeout(() => (window.location.href = redirectUrl), 2000);
+        } catch (err) {
+          showToast(err.message, "error");
+        }
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
